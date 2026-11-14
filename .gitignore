@@ -1,8 +1,14 @@
-
+# Archived working files - keep locally
+notebooks/archive/
 # Raw and processed datasets
 datasets/raw/
-datasets/processed/*.csv
-datasets/processed/*.parquet
+datasets/processed/
+
+# Full EDA dataset - keep locally
+data/*.parquet
+
+# Keep only the public sample CSV
+!data/invoice_eda_sample.csv
 
 # Python temporary files
 __pycache__/
@@ -18,3 +24,7 @@ env/
 .env
 .env.*
 !.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
