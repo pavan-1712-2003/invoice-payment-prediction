@@ -1,0 +1,10 @@
+metric,value
+total_records,817829
+total_columns,45
+paid_records,713456
+overdue_records,104373
+overdue_with_payment_equal_due,104373
+paid_with_positive_delay,0
+overdue_with_positive_delay,0
+missing_payment_dates,0
+duplicate_rows,0
