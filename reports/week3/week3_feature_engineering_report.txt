@@ -1,0 +1,31 @@
+WEEK 3 FEATURE ENGINEERING REPORT
+=================================
+Train modelling rows after excluding Cancelled: 995,966
+Test modelling rows after excluding Cancelled: 1,899,611
+Training split rows (2019-2022): 797,101
+Validation split rows (2023): 198,865
+Final test rows (2024-2025): 1,899,611
+Global training overdue rate: 10.480%
+Categorical predictors (10): customer_id, vendor_id, product_category, currency, payment_method, order_channel, sales_rep, customer_country, customer_state, customer_city
+Numeric predictors (25): quantity, unit_price, discount_percent, tax_percent, subtotal, discount_amount, tax_amount, shipping_cost, total_amount, invoice_year, invoice_month, invoice_quarter, invoice_day, invoice_weekday, invoice_is_month_start, invoice_is_month_end, payment_term_days, log_total_amount, log_quantity, discount_amount_ratio, past_invoice_count, past_overdue_count, past_avg_invoice_amount, past_overdue_rate_smoothed, has_past_customer_history
+
+LEAKAGE CONTROLS
+- Excluded payment_status and payment_date from predictors.
+- Excluded is_overdue and target_is_overdue from predictors.
+- Customer history uses only prior invoices with due_date earlier than the current invoice_date.
+- Invoices not yet due are excluded from historical customer aggregates.
+- Test history uses training labels only; test labels do not update history.
+- Original 2024-2025 test period remains held out.
+
+TARGET LIMITATION
+Only overdue-status classification is supported.
+A valid paid-late regression target is not supported by the supplied labels.
+Do not describe this task as predicting actual payment delay in days.
+
+OUTPUTS
+- datasets/processed/week3/train_features.parquet
+- datasets/processed/week3/validation_features.parquet
+- datasets/processed/week3/test_features.parquet
+- datasets/processed/week3/feature_spec.json
+- reports/week3/week3_split_summary.csv
+- reports/week3/week3_feature_missingness.csv

@@ -1,0 +1,4 @@
+split,rows,start_date,end_date,overdue_rate_percent
+train,797101,2019-01-01,2022-12-31,10.4856
+validation,198865,2023-01-01,2023-12-31,10.4553
+final_test,1899611,2024-01-01,2025-12-31,10.5167
