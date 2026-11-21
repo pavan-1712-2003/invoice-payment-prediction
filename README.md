@@ -1,134 +1,139 @@
-# Invoice Analytics & Payment Behaviour Analysis
+# Invoice Payment Delay & Cash-Flow Intelligence Platform
 
-## Project Overview
+## 1. Project Overview
 
-This project analyzes invoice transaction data to understand payment patterns, customer behaviour, invoice aging, and cash-flow-related trends.
+This project focuses on invoice analytics, customer payment behaviour, data quality validation, feature engineering, and overdue-status classification.
 
-The project focuses on exploratory data analysis (EDA), data quality validation, feature engineering, and identifying limitations that affect future payment-delay modelling.
+The project uses the invoice datasets provided for the Orvians Technologies internship and follows a chronological data-processing workflow.
 
-**Important:** The current dataset supports invoice analytics and exploratory payment-status analysis. It does not contain reliable historical late-payment examples for building a genuine future payment-delay prediction model.
-
-## Dataset Overview
+## 2. Dataset Overview
 
 | Dataset | Records | Columns |
 |---|---:|---:|
-| Training data | 1,048,575 | 31 |
-| Test data | 2,000,000 | 31 |
-| EDA dataset | 1,048,575 | 37 |
+| Original training dataset | 1,048,575 | 31 |
+| Original test dataset | 2,000,000 | 31 |
 
-The EDA dataset contains additional date-related and engineered features.
+The datasets cover:
+- Training invoices: 2019–2023
+- Test invoices: 2024–2025
 
-The original datasets and processed Parquet files are excluded from this public repository because of their size.
+The original and processed Parquet datasets are excluded from this public repository because of their size.
 
-## EDA Activities
+## 3. Week 1 — Data Cleaning and Validation
 
-- Data inspection and validation
+Completed:
+- Data type validation and date conversion
 - Missing-value and duplicate checks
-- Univariate and bivariate analysis
+- Invalid date and financial-value checks
+- Data dictionary generation
+- Cleaning log generation
+- Outlier analysis
+- CSV and Parquet output generation
+
+## 4. Week 2 — Exploratory Data Analysis
+
+Completed:
+- Invoice payment-status analysis
+- Invoice amount distribution
 - Customer payment behaviour analysis
-- Monthly and weekday trend analysis
 - Invoice aging analysis
+- Country and monthly trends
 - Correlation analysis
-- Feature engineering
-- Data quality and target leakage checks
-- Customer and currency history analysis
+- Data quality and target investigation
 
-## Key Findings
+### Important findings
 
-1. Approximately 68.04% of training invoices are marked as Paid.
-2. Approximately 16.99% are Pending, 9.95% are Overdue, and 5.02% are Cancelled.
-3. Among paid invoices, 96.03% are recorded as paid before the due date.
-4. No positive payment delays were observed among paid invoices.
-5. Invoice amount has almost no correlation with payment delay in this dataset.
-6. Payment terms show a negative relationship with payment delay.
-7. Monthly and weekday payment-delay averages are relatively stable.
-8. Invoice volume varies slightly across calendar months.
-9. The aging analysis indicates that most outstanding records fall into the 90+ day bucket.
+- Approximately 68.04% of training invoices are marked Paid.
+- Approximately 16.99% are Pending.
+- Approximately 9.95% are Overdue.
+- Approximately 5.02% are Cancelled.
+- No positive payment delays were observed among paid invoices.
+- Payment dates for unpaid invoices contain placeholder-like values and should not be interpreted as actual settlements.
 
-## Important Data Limitations
+## 5. Week 3 — Feature Engineering
 
-- Non-paid invoices have payment dates equal to their due dates. These dates may be placeholders and should not be treated as actual payment dates.
-- No positive payment delays were observed among paid invoices. Therefore, the dataset does not provide meaningful examples of historical late payments.
-- The `is_overdue` feature is derived from payment status and can cause target leakage.
-- `payment_date` is future information when making predictions at invoice creation time.
-- The dataset contains multiple currencies. Monetary totals should not be combined without currency normalization.
-- The aging analysis uses 29 February 2024 as its reference date. It is not a verified current outstanding-invoice snapshot.
+The official Week 3 workflow uses the same Orvians invoice dataset from Weeks 1 and 2.
 
-**Modelling limitation:** A separate, validated dataset containing actual invoice dates, due dates, and payment datesâ€”including genuine late paymentsâ€”is required before building a meaningful payment-delay prediction model.
+### Prediction objective
 
-## Project Deliverables
+Classify the supplied overdue-status label (`is_overdue`).
 
-- `notebooks/analytics/Invoice_Payment_Prediction_EDA_Cleaned.ipynb` â€” Cleaned EDA notebook.
-- `reports/eda/Invoice_Payment_Prediction_EDA_Report.pdf` â€” EDA report.
-- `reports/eda/` â€” 14 EDA visualizations.
-- `reports/analytics/final_data_validation_summary.csv` â€” Data validation summary.
-- `data/sample/invoice_eda_sample.csv` â€” Public sample dataset.
-- `src/common/legacy_scripts/` â€” Historical analysis and validation scripts retained for reference.
+This is a classification task using the dataset's existing overdue-status labels. It should not be interpreted as a verified prediction of actual payment delay in days.
 
-## Technologies Used
+### Feature engineering
+
+Created feature groups include:
+
+- **Time features:** Invoice year, month, quarter, day, weekday, month-start and month-end indicators.
+- **Payment-term features:** Days between invoice date and due date.
+- **Amount features:** Log-transformed invoice amount, quantity, and financial ratios.
+- **Customer history:** Previous invoice count, previous overdue count, historical average invoice amount, and smoothed historical overdue rate.
+- **Categorical features:** Customer, vendor, product category, currency, payment method, order channel, sales representative, and customer location.
+
+Customer history features use prior invoices with due dates earlier than the current invoice date. Test history uses training records only.
+
+### Chronological data splitting
+
+| Split | Period | Records |
+|---|---|---:|
+| Training | 2019–2022 | 797,101 |
+| Validation | 2023 | 198,865 |
+| Final test | 2024–2025 | 1,899,611 |
+
+Cancelled invoices are excluded from modelling.
+
+### Leakage controls
+
+- Excluded `payment_status` and `payment_date` from model predictors.
+- Excluded the target from model predictors.
+- Used past-only customer history features.
+- Kept the final test period separate.
+- Documented feature definitions and missingness.
+
+### Target limitation
+
+The supplied dataset does not contain positive examples of completed late payments among paid invoices. Therefore, it does not support a genuine paid-late regression target or reliable payment-delay-in-days prediction.
+
+The overdue-status classifier must be evaluated as a classification of the supplied label, with its data limitations clearly acknowledged.
+
+## 6. Week 3 Deliverables
+
+- `scripts/week3_feature_engineering.py`
+- `datasets/processed/week3/feature_spec.json`
+- `reports/week3/week3_feature_engineering_report.txt`
+- `reports/week3/week3_feature_missingness.csv`
+- `reports/week3/week3_split_summary.csv`
+
+Generated Parquet feature datasets are retained outside Git because of their size.
+
+## 7. Technologies Used
 
 - Python
 - Pandas
 - NumPy
+- Scikit-learn
 - Matplotlib
 - Seaborn
-- Jupyter Notebook
+- PyArrow
 - Parquet
 - CSV
+- Git and GitHub
 
-## Repository Structure
+## 8. Project Status
 
-```text
-invoice-payment-prediction/
-|
-|-- data/
-|   |-- sample/
-|       |-- invoice_eda_sample.csv
-|
-|-- notebooks/
-|   |-- analytics/
-|       |-- Invoice_Payment_Prediction_EDA_Cleaned.ipynb
-|
-|-- reports/
-|   |-- analytics/
-|   |   |-- final_data_validation_summary.csv
-|   |
-|   |-- eda/
-|       |-- 14 visualization images
-|       |-- Invoice_Payment_Prediction_EDA_Report.pdf
-|
-|-- src/
-|   |-- common/
-|       |-- legacy_scripts/
-|           |-- Historical analysis scripts
-|
-|-- README.md
-|-- .gitignore
-```
+| Week | Work | Status |
+|---|---|---|
+| Week 1 | Data cleaning and validation | Completed |
+| Week 2 | Exploratory data analysis | Completed |
+| Week 3 | Feature engineering and leakage checks | Completed |
+| Week 4 | Baseline model development | Pending |
 
-## How to Run
+## 9. Limitations and Future Work
 
-1. Clone the repository.
-2. Install the required Python libraries.
-3. Open the EDA notebook using Jupyter Notebook.
-4. Obtain the full dataset separately if you want to reproduce the original analysis.
-5. Update the notebook's dataset paths to match your local files.
-6. Run the notebook cells.
+- The supplied overdue-status label is not independently verified as a final payment outcome.
+- The dataset does not support genuine paid-late regression.
+- Historical source-system availability timestamps have not been verified.
+- Stable overdue rates across time require further investigation.
+- Model performance and predictive usefulness must be established through validation.
 
-Install dependencies:
-
-```bash
-pip install pandas numpy matplotlib seaborn pyarrow jupyter
-```
-
-## Data Availability
-
-The full raw and processed datasets are not included in this repository. A sample CSV is provided for demonstration.
-
-The full processed Parquet dataset is required to reproduce the original analysis exactly.
-
-## Project Status
-
-**Completed:** Data cleaning, exploratory data analysis, feature investigation, validation, and reporting.
-
-**Future work:** Identify and validate a genuine historical payment-delay dataset before developing a reliable prediction model.
+The project is intended as an applied machine-learning engineering exercise. Production deployment requires stronger validation of target semantics and source-data availability.
