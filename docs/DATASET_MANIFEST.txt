@@ -1,0 +1,50 @@
+# Dataset Manifest
+
+## Original Datasets
+
+| Dataset | Rows | Columns |
+|---|---:|---:|
+| Train | 2,500,000 | 31 |
+| Test | 2,000,000 | 31 |
+
+Location:
+- datasets/raw/train_invoices.csv
+- datasets/raw/test_invoices.csv
+
+## Cleaned Datasets
+
+Location:
+- datasets/processed/train_cleaned.csv
+- datasets/processed/test_cleaned.csv
+- datasets/processed/train_cleaned.parquet
+- datasets/processed/test_cleaned.parquet
+
+All four cleaned files were generated and verified on the new PC.
+
+## Validation Summary
+
+- Missing values: 0 in train and test.
+- Duplicate invoice IDs: 0.
+- Duplicate invoice numbers: 0.
+- Invalid dates: 0.
+- Negative or infinite numeric values: 0.
+- Train/test invoice ID overlap: 0.
+
+## Target Distribution
+
+Training:
+- Not overdue (0): 2,250,286
+- Overdue (1): 249,714
+
+Test:
+- Not overdue (0): 1,800,223
+- Overdue (1): 199,777
+
+## Important Notes
+
+- The target is_overdue exactly matches payment_status == Overdue.
+- Do not use payment_status or payment_date as invoice-time prediction features.
+- No positive payment delays were observed among paid invoices.
+- Multiple currencies are present. Monetary values must not be compared directly across currencies without conversion or currency-aware analysis.
+
+Large datasets are excluded from Git tracking. Obtain them separately to reproduce the project.

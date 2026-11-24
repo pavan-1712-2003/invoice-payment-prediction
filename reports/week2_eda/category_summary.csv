@@ -1,0 +1,10 @@
+Column,Unique_Values,Most_Common_Value,Most_Common_Count
+customer_country,9,India,829578
+customer_city,30,Manchester,87301
+vendor_name,30,Pinnacle Wholesale,83824
+product_category,8,Electronics,543495
+product_name,46,Office Chair Ergo,54855
+currency,6,USD,749938
+payment_method,7,Bank Transfer,627081
+payment_status,4,Paid,1700035
+order_channel,6,Online Portal,750729

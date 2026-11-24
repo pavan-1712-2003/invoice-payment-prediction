@@ -1,0 +1,5 @@
+payment_status,0,1
+Cancelled,100.0,0.0
+Overdue,0.0,100.0
+Paid,100.0,0.0
+Pending,100.0,0.0
